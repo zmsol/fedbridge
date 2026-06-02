@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="topAccent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#f0883e"/>
+      <stop offset="50%" stop-color="#f0a53e"/>
+      <stop offset="100%" stop-color="#f0883e"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0.5" y1="1" x2="0.5" y2="0">
+      <stop offset="0%" stop-color="#f0883e" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#f0883e" stop-opacity="0.06"/>
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1c2333" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#0d1117"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+
+  <!-- Top accent line -->
+  <rect x="0" y="0" width="1200" height="4" fill="url(#topAccent)" opacity="0.6"/>
+
+  <!-- Subtle radial glow behind content -->
+  <rect x="200" y="100" width="800" height="430" rx="200" fill="url(#glow)"/>
+
+  <!-- Decorative diamond shape -->
+  <rect x="950" y="80" width="140" height="140" rx="4" fill="none" stroke="#f0883e" stroke-width="1.5" opacity="0.12" transform="rotate(45 1020 150)"/>
+  <rect x="980" y="110" width="80" height="80" rx="3" fill="none" stroke="#f0883e" stroke-width="1" opacity="0.08" transform="rotate(45 1020 150)"/>
+
+  <!-- Logo -->
+  <text x="100" y="140" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="52" font-weight="800" letter-spacing="-0.5">
+    <tspan fill="#f0883e">Fed</tspan><tspan fill="#e6edf3">Bridge</tspan>
+  </text>
+
+  <!-- Tag badge -->
+  <rect x="100" y="170" width="185" height="28" rx="3" fill="none" stroke="#f0883e" stroke-opacity="0.25"/>
+  <text x="104" y="189" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#f0883e" letter-spacing="2">PERSONALIZED CMMC INTELLIGENCE</text>
+
+  <!-- Headline -->
+  <text x="100" y="280" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="46" font-weight="800" fill="#e6edf3" letter-spacing="-0.3">
+    Free Headlines Tell You
+  </text>
+  <text x="100" y="340" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="46" font-weight="800" fill="#f0883e" letter-spacing="-0.3">
+    What Happened.
+  </text>
+  <text x="100" y="400" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="46" font-weight="800" fill="#e6edf3" letter-spacing="-0.3">
+    FedBridge Tells You What
+  </text>
+  <text x="100" y="460" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="46" font-weight="800" fill="#e6edf3" letter-spacing="-0.3">
+    Changed in <tspan fill="#f0883e">YOUR</tspan> Contracts.
+  </text>
+
+  <!-- Subtitle -->
+  <text x="100" y="515" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" fill="#8b949e" letter-spacing="0.2">
+    Briefs tailored to your NAICS code, CMMC level, and contract deadlines
+  </text>
+
+  <!-- Pricing badge -->
+  <rect x="100" y="540" width="130" height="36" rx="4" fill="#f0883e"/>
+  <text x="113" y="564" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#0d1117">$297/mo</text>
+
+  <!-- Trust line -->
+  <text x="245" y="564" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#484f58">
+    One tier · Cancel anytime · No meetings
+  </text>
+
+  <!-- Small URL at bottom right -->
+  <text x="1040" y="600" font-family="'SFMono-Regular', Consolas, 'Liberation Mono', monospace" font-size="12" fill="#484f58" text-anchor="end">
+    fedbridge.github.io
+  </text>
+</svg>

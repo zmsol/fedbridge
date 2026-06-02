@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscribe — FedBridge Intelligence</title>
+    <meta name="robots" content="noindex, nofollow">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #e2e8f0;
+            background: #0a0e17;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .card {
+            max-width: 640px;
+            width: 100%;
+            background: #111827;
+            border: 1px solid #1e293b;
+            border-radius: 8px;
+            padding: 40px;
+        }
+        .logo {
+            font-family: Georgia, serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: #f1f5f9;
+            text-align: center;
+            margin-bottom: 4px;
+        }
+        .logo span { color: #f59e0b; }
+        h1 {
+            font-family: Georgia, serif;
+            font-size: 22px;
+            text-align: center;
+            color: #f1f5f9;
+            margin-bottom: 4px;
+        }
+        .subtitle { text-align: center; color: #64748b; font-size: 14px; margin-bottom: 24px; }
+        .price-tag {
+            text-align: center;
+            font-size: 14px;
+            color: #f59e0b;
+            font-weight: 600;
+            margin-bottom: 28px;
+            padding: 8px 16px;
+            background: #1e293b;
+            border: 1px solid #f59e0b30;
+            border-radius: 6px;
+        }
+
+        .form-group { margin-bottom: 18px; }
+        label { display: block; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 4px; }
+        label .hint { font-weight: 400; color: #475569; font-size: 11px; }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            color: #e2e8f0;
+            background: #1e293b;
+            transition: border-color 0.2s;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #f59e0b;
+            background: #1e293b;
+        }
+        textarea { resize: vertical; min-height: 70px; }
+        select { cursor: pointer; }
+        select option { background: #1e293b; color: #e2e8f0; }
+
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: #f59e0b;
+            color: #0a0e17;
+            font-size: 16px;
+            font-weight: 700;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background 0.2s;
+        }
+        .btn:hover { background: #d97706; }
+        .btn:disabled { background: #475569; color: #94a3b8; cursor: not-allowed; }
+
+        .footnote { text-align: center; font-size: 12px; color: #475569; margin-top: 16px; }
+        .footnote a { color: #94a3b8; text-decoration: none; }
+        .footnote a:hover { color: #f59e0b; }
+
+        .alert { display: none; padding: 12px; border-radius: 6px; font-size: 13px; margin-bottom: 16px; }
+        .alert-error { background: #451a03; border: 1px solid #f59e0b40; color: #f59e0b; }
+        .alert-success { background: #064e3b; border: 1px solid #22c55e40; color: #22c55e; }
+
+        .success-msg { display: none; text-align: center; padding: 40px 20px; }
+        .success-msg .check { font-size: 48px; margin-bottom: 12px; color: #22c55e; }
+        .success-msg h2 { font-family: Georgia, serif; font-size: 22px; color: #f1f5f9; margin-bottom: 8px; }
+        .success-msg p { color: #64748b; font-size: 14px; margin-bottom: 8px; }
+
+        @media (max-width: 500px) {
+            .card { padding: 20px; }
+            .row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="card" id="form-card">
+    <div class="logo"><span>Fed</span>Bridge</div>
+    <h1>Subscribe to FedBridge</h1>
+    <p class="subtitle">Weekly CMMC intelligence briefs. $297/month. Cancel anytime.</p>
+    <div class="price-tag">$297 / month — One tier. No upsells.</div>
+
+    <div class="alert alert-error" id="alert-error"></div>
+    <div class="alert alert-success" id="alert-success"></div>
+
+    <form id="subscribe-form">
+        <div class="row">
+            <div class="form-group">
+                <label for="first_name">First Name</label>
+                <input type="text" id="first_name" name="first_name" required>
+            </div>
+            <div class="form-group">
+                <label for="last_name">Last Name</label>
+                <input type="text" id="last_name" name="last_name" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" required placeholder="you@company.com">
+        </div>
+
+        <div class="form-group">
+            <label for="company">Company Name</label>
+            <input type="text" id="company" name="company" required>
+        </div>
+
+        <div class="row">
+            <div class="form-group">
+                <label for="naics">NAICS Code <span class="hint">(primary)</span></label>
+                <select id="naics" name="naics" required>
+                    <option value="">Select your NAICS</option>
+                    <option value="541511">541511 — Custom Computer Programming</option>
+                    <option value="541512">541512 — Computer Systems Design</option>
+                    <option value="541330">541330 — Engineering Services</option>
+                    <option value="561621">561621 — Security Systems Services</option>
+                    <option value="518210">518210 — Computing Infrastructure Providers</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="cmmc_level">CMMC Level Needed</label>
+                <select id="cmmc_level" name="cmmc_level" required>
+                    <option value="">Select level</option>
+                    <option value="level1">Level 1 (Self-Assessment)</option>
+                    <option value="level2">Level 2 (Certified — CUI handling)</option>
+                    <option value="unsure">Not Sure</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group">
+                <label for="contract_type">Contract Type</label>
+                <select id="contract_type" name="contract_type" required>
+                    <option value="">Select type</option>
+                    <option value="prime">Prime Contractor (direct with DoD)</option>
+                    <option value="sub">Subcontractor</option>
+                    <option value="both">Both Prime and Sub</option>
+                    <option value="aspiring">Aspiring — want DoD contracts</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="company_size">Company Size</label>
+                <select id="company_size" name="company_size" required>
+                    <option value="">Select size</option>
+                    <option value="1-10">1-10 employees</option>
+                    <option value="11-25">11-25 employees</option>
+                    <option value="26-50">26-50 employees</option>
+                    <option value="51-100">51-100 employees</option>
+                    <option value="100+">100+ employees</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="sprs_score">Current SPRS Score <span class="hint">(if known)</span></label>
+            <input type="text" id="sprs_score" name="sprs_score" placeholder="e.g., -12, 85, or blank">
+        </div>
+
+        <div class="form-group">
+            <label for="concern">Biggest Compliance Concern</label>
+            <textarea id="concern" name="concern" placeholder="What keeps you up at night? (optional)"></textarea>
+        </div>
+
+        <button type="submit" class="btn" id="submit-btn">Subscribe — $297/month</button>
+    </form>
+
+    <p class="footnote">
+        After submitting, you'll be redirected to Stripe to complete payment.<br>
+        First brief arrives next Monday. <a href="privacy.html">Privacy Policy</a>
+    </p>
+</div>
+
+<div class="card" id="success-card" style="display:none;">
+    <div class="success-msg">
+        <div class="check">✓</div>
+        <h2>You're subscribed!</h2>
+        <p>Your information has been saved.</p>
+        <p id="redirect-message">Redirecting you to PayPal to complete your $297/month payment...</p>
+        <p style="font-size: 12px; color: #475569; margin-top: 16px;">
+            If you aren't redirected automatically, <a href="#" id="manual-redirect" style="color:#f59e0b;">click here</a>.
+        </p>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+
+    const form = document.getElementById('subscribe-form');
+    const submitBtn = document.getElementById('submit-btn');
+    const formCard = document.getElementById('form-card');
+    const successCard = document.getElementById('success-card');
+    const alertError = document.getElementById('alert-error');
+    const alertSuccess = document.getElementById('alert-success');
+    const redirectMsg = document.getElementById('redirect-message');
+    const manualRedirect = document.getElementById('manual-redirect');
+
+    // ============================================================
+    // SETUP INSTRUCTIONS — READ BEFORE DEPLOYING
+    // ============================================================
+    // 1. Create Stripe account (5 min, SSN + bank account)
+    // 2. Create a Product: "FedBridge Weekly Brief" — $297/month, recurring
+    // 3. Create a Payment Link for that product
+    // 4. Paste the Payment Link URL below
+    // ============================================================
+
+    const APPS_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
+    const STRIPE_PAYMENT_LINK_URL = 'YOUR_STRIPE_PAYMENT_LINK_URL_HERE';
+
+    // Helper: show error alert
+    function showError(msg) {
+        alertError.textContent = msg;
+        alertError.style.display = 'block';
+        alertSuccess.style.display = 'none';
+    }
+
+    // Helper: clear alerts
+    function clearAlerts() {
+        alertError.style.display = 'none';
+        alertSuccess.style.display = 'none';
+    }
+
+    // Helper: redirect to Stripe checkout
+    function goToStripe() {
+        if (STRIPE_PAYMENT_LINK_URL && STRIPE_PAYMENT_LINK_URL !== 'YOUR_STRIPE_PAYMENT_LINK_URL_HERE') {
+            window.location.href = STRIPE_PAYMENT_LINK_URL;
+        } else {
+            redirectMsg.textContent = 'Payment link not yet configured. Your info is saved. You will be notified when payment setup is ready.';
+            manualRedirect.style.display = 'none';
+        }
+    }
+
+    // Manual redirect fallback
+    manualRedirect.addEventListener('click', function(e) {
+        e.preventDefault();
+        goToStripe();
+    });
+
+    // Form submit
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        clearAlerts();
+
+        // Validate all required fields
+        const required = form.querySelectorAll('[required]');
+        for (let field of required) {
+            if (!field.value.trim()) {
+                showError('Please fill in all required fields.');
+                field.focus();
+                return;
+            }
+        }
+
+        // Validate email format
+        const email = document.getElementById('email').value.trim();
+        if (!email.includes('@') || !email.includes('.')) {
+            showError('Please enter a valid email address.');
+            return;
+        }
+
+        // Disable button
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Processing...';
+
+        // Collect form data
+        const data = {
+            first_name: document.getElementById('first_name').value.trim(),
+            last_name: document.getElementById('last_name').value.trim(),
+            email: email,
+            company: document.getElementById('company').value.trim(),
+            naics: document.getElementById('naics').value,
+            cmmc_level: document.getElementById('cmmc_level').value,
+            contract_type: document.getElementById('contract_type').value,
+            company_size: document.getElementById('company_size').value,
+            sprs_score: document.getElementById('sprs_score').value.trim(),
+            concern: document.getElementById('concern').value.trim(),
+            subscribed_at: new Date().toISOString()
+        };
+
+        // Check if Stripe is configured
+        if (!STRIPE_PAYMENT_LINK_URL || STRIPE_PAYMENT_LINK_URL === 'YOUR_STRIPE_PAYMENT_LINK_URL_HERE') {
+            // Script not deployed — show success and redirect to PayPal
+            // (Data will be lost if PayPal isn't configured too, so warn)
+            console.log('Form data (not saved — Apps Script not deployed):', data);
+            formCard.style.display = 'none';
+            successCard.style.display = 'block';
+
+            if (STRIPE_PAYMENT_LINK_URL && STRIPE_PAYMENT_LINK_URL !== 'YOUR_STRIPE_PAYMENT_LINK_URL_HERE') {
+                setTimeout(goToStripe, 2000);
+            } else {
+                redirectMsg.textContent = 'Neither the subscriber database nor Stripe are configured yet. Your data is not saved. Contact the FedBridge team to complete setup.';
+                manualRedirect.style.display = 'none';
+            }
+            return;
+        }
+
+        // Send data to Google Apps Script
+        fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error('Server returned ' + response.status);
+            }
+            return response.json();
+        })
+        .then(function(result) {
+            if (result.success) {
+                // Data saved successfully — show success, redirect to PayPal
+                formCard.style.display = 'none';
+                successCard.style.display = 'block';
+                setTimeout(goToStripe, 2000);
+            } else {
+                throw new Error(result.error || 'Unknown error');
+            }
+        })
+        .catch(function(error) {
+            console.error('Submission error:', error);
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Subscribe — $297/month';
+            showError('Something went wrong saving your data. Please try again or contact support.');
+        });
+    });
+})();
+</script>
+
+</body>
+</html>

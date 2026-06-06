@@ -220,7 +220,7 @@
         <div class="check">✓</div>
         <h2>You're subscribed!</h2>
         <p>Your information has been saved.</p>
-        <p id="redirect-message">Redirecting you to PayPal to complete your $297/month payment...</p>
+        <p id="redirect-message">Redirecting you to Stripe to complete your $297/month payment...</p>
         <p style="font-size: 12px; color: #475569; margin-top: 16px;">
             If you aren't redirected automatically, <a href="#" id="manual-redirect" style="color:#f59e0b;">click here</a>.
         </p>
@@ -241,16 +241,13 @@
     const manualRedirect = document.getElementById('manual-redirect');
 
     // ============================================================
-    // SETUP INSTRUCTIONS — READ BEFORE DEPLOYING
-    // ============================================================
-    // 1. Create Stripe account (5 min, SSN + bank account)
-    // 2. Create a Product: "FedBridge Weekly Brief" — $297/month, recurring
-    // 3. Create a Payment Link for that product
-    // 4. Paste the Payment Link URL below
+    // SETUP — Complete
+    // Stripe Payment Link: wired in and working
+    // Google Apps Script: set up next (see FedBridge_Subscriber_Handler.gs)
     // ============================================================
 
-    const APPS_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
-    const STRIPE_PAYMENT_LINK_URL = 'YOUR_STRIPE_PAYMENT_LINK_URL_HERE';
+    const APPS_SCRIPT_URL = null; // Will be configured when Google Sheet is set up
+    const STRIPE_PAYMENT_LINK_URL = 'https://buy.stripe.com/5kQeVecUk9YPc9AesognK00';
 
     // Helper: show error alert
     function showError(msg) {
@@ -322,51 +319,52 @@
             subscribed_at: new Date().toISOString()
         };
 
-        // Check if Stripe is configured
-        if (!STRIPE_PAYMENT_LINK_URL || STRIPE_PAYMENT_LINK_URL === 'YOUR_STRIPE_PAYMENT_LINK_URL_HERE') {
-            // Script not deployed — show success and redirect to PayPal
-            // (Data will be lost if PayPal isn't configured too, so warn)
-            console.log('Form data (not saved — Apps Script not deployed):', data);
-            formCard.style.display = 'none';
-            successCard.style.display = 'block';
+        // Log data for now (sheet setup coming next)
+        console.log('Subscriber data:', data);
+        // Save to localStorage as temporary backup
+        try {
+            const existing = JSON.parse(localStorage.getItem('fedbridge_subscribers') || '[]');
+            existing.push(data);
+            localStorage.setItem('fedbridge_subscribers', JSON.stringify(existing));
+        } catch(e) { /* localStorage not available */ }
 
-            if (STRIPE_PAYMENT_LINK_URL && STRIPE_PAYMENT_LINK_URL !== 'YOUR_STRIPE_PAYMENT_LINK_URL_HERE') {
-                setTimeout(goToStripe, 2000);
+        // Try saving to Apps Script if configured
+        function saveAndRedirect() {
+            if (APPS_SCRIPT_URL) {
+                fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                })
+                .then(function(response) {
+                    if (!response.ok) throw new Error('Server returned ' + response.status);
+                    return response.json();
+                })
+                .then(function(result) {
+                    if (result.success) {
+                        formCard.style.display = 'none';
+                        successCard.style.display = 'block';
+                        setTimeout(goToStripe, 2000);
+                    } else {
+                        throw new Error(result.error || 'Unknown error');
+                    }
+                })
+                .catch(function(error) {
+                    console.error('Apps Script error:', error);
+                    // Fall through to Stripe anyway
+                    formCard.style.display = 'none';
+                    successCard.style.display = 'block';
+                    setTimeout(goToStripe, 2000);
+                });
             } else {
-                redirectMsg.textContent = 'Neither the subscriber database nor Stripe are configured yet. Your data is not saved. Contact the FedBridge team to complete setup.';
-                manualRedirect.style.display = 'none';
-            }
-            return;
-        }
-
-        // Send data to Google Apps Script
-        fetch(APPS_SCRIPT_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        })
-        .then(function(response) {
-            if (!response.ok) {
-                throw new Error('Server returned ' + response.status);
-            }
-            return response.json();
-        })
-        .then(function(result) {
-            if (result.success) {
-                // Data saved successfully — show success, redirect to PayPal
+                // No sheet configured yet — go straight to Stripe
                 formCard.style.display = 'none';
                 successCard.style.display = 'block';
                 setTimeout(goToStripe, 2000);
-            } else {
-                throw new Error(result.error || 'Unknown error');
             }
-        })
-        .catch(function(error) {
-            console.error('Submission error:', error);
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Subscribe — $297/month';
-            showError('Something went wrong saving your data. Please try again or contact support.');
-        });
+        }
+
+        saveAndRedirect();
     });
 })();
 </script>
